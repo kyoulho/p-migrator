@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.playce.migrator.dao.mapper.CommonCodeMapper">
+    <resultMap id="commonCode" type="io.playce.migrator.dto.common.CommonCode" autoMapping="true">
+        <id property="codeCategoryId" column="code_category_id" javaType="Long" />
+        <collection property="codeDetails" ofType="io.playce.migrator.dto.common.CodeDetail" autoMapping="true">
+            <id property="codeCategoryId" column="code_category_id" javaType="Long"/>
+            <id property="code" column="code" javaType="String"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectCommonCode" resultMap="commonCode">
+        select cc.code_category_id,
+               cc.korean_category_name,
+               cc.english_category_name,
+               cc.description,
+               cc.use_yn,
+               cd.code_detail_id,
+               cd.code,
+               cd.korean_code_name,
+               cd.english_code_name,
+               cd.display_order,
+               cd.use_yn
+        from code_category cc
+        join code_detail cd
+            on cc.code_category_id = cd.code_category_id
+            and cc.use_yn = 'Y'
+            and cd.use_yn = 'Y'
+        left join code_link cl
+            on cl.parent_code_detail_id = cd.code_detail_id
+            and cl.code_detail_id = cd.code_detail_id
+
+        <if test="keyword != null">
+            where cc.korean_category_name like concat('%', #{keyword}, '%')
+            or cc.english_category_name like concat('%', #{keyword}, '%')
+        </if>
+        order by cc.code_category_id, cd.display_order
+    </select>
+</mapper>

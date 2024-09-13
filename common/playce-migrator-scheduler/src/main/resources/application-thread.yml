@@ -1,0 +1,16 @@
+thread-config:
+  analysis-properties:
+    core-pool-size: 2
+    max-pool-size: 16
+    queue-capacity: 10000
+    name-prefix: ma-
+  migration-properties:
+    core-pool-size: 2
+    max-pool-size: 16
+    queue-capacity: 10000
+    name-prefix: mm-
+  worker-properties:
+    core-pool-size: 32
+    max-pool-size: 64
+    queue-capacity: 65536
+    name-prefix: mw-

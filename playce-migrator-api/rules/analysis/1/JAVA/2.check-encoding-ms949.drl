@@ -1,0 +1,26 @@
+import io.playce.migrator.dto.analysis.AnalysisRuleRequest
+import io.playce.migrator.dto.analysis.AnalysisRuleResult
+import io.playce.migrator.migration.process.util.ResultUtil
+
+rule "check encoding - MS949"
+    when
+        request: AnalysisRuleRequest(content.contains("MS949"), c: content)
+    then
+        AnalysisRuleResult result = ResultUtil.makeAnalysisRuleResult(${ruleId}, request);
+
+        String detectStr = ResultUtil.getValueFromKeyword(c, "MS949");
+        result.setDetectedString(detectStr);
+
+        result.setOverrideComment("발견된 인코딩 : " + detectStr + "의 확인이 필요합니다.");
+end;
+rule "check encoding - ms949"
+    when
+        request: AnalysisRuleRequest(content.contains("ms949"), c: content)
+    then
+        AnalysisRuleResult result = ResultUtil.makeAnalysisRuleResult(${ruleId}, request);
+
+        String detectStr = ResultUtil.getValueFromKeyword(c, "ms949");
+        result.setDetectedString(detectStr);
+
+        result.setOverrideComment("발견된 인코딩 : " + detectStr + "의 확인이 필요합니다.");
+end;

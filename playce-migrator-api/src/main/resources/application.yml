@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: Playce Migrator MVP
+
+  main:
+    banner-mode: LOG
+
+  mvc:
+    static-path-pattern: /**
+    pathmatch.matching-strategy: ant_path_matcher
+  web.resources.static-locations: file:./front
+
+  messages:
+    basename: i18n/errors
+
+  # File Upload Configuration
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
+
+  profiles:
+    include:
+      - datasource
+      - thread
+      - jpa
+      - logger
+      - migrator
+      - subs
+      - jwt
+      - mybatis
+      - scheduler
+      - commonjob
+      - prepare
+      - analysisjob
+      - migrationjob
+
+  sql:
+    init:
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data-*.sql
+
+server:
+  servlet.context-path: /migrator
+  forward-headers-strategy: native
+  tomcat.redirect-context-root: false
+  port: 8083

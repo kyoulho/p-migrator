@@ -1,0 +1,12 @@
+import io.playce.migrator.dto.analysis.AnalysisRuleRequest
+import io.playce.migrator.dto.analysis.AnalysisRuleResult
+import io.playce.migrator.migration.process.util.ResultUtil
+
+rule "check ip address pattern"
+    when
+        request: AnalysisRuleRequest(content matches ".*([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3}).*" , c: content)
+    then
+        AnalysisRuleResult result = ResultUtil.makeAnalysisRuleResult(${ruleId}, request);
+        result.setDetectedString(c.trim());
+        result.setOverrideComment("발견된 IP Address Pattern : " + c + "의 확인이 필요합니다.");
+end;

@@ -1,0 +1,15 @@
+import io.playce.migrator.dto.analysis.AnalysisRuleRequest
+import io.playce.migrator.dto.analysis.AnalysisRuleResult
+import io.playce.migrator.migration.process.util.ResultUtil
+
+rule "check encoding - 8859-1"
+    when
+        request: AnalysisRuleRequest(content.contains("8859-1"), c: content)
+    then
+        AnalysisRuleResult result = ResultUtil.makeAnalysisRuleResult(${ruleId}, request);
+
+        String detectStr = ResultUtil.getValueFromKeyword(c, "8859-1");
+        result.setDetectedString(detectStr);
+
+        result.setOverrideComment("발견된 인코딩 : " + detectStr + "의 확인이 필요합니다.");
+end;

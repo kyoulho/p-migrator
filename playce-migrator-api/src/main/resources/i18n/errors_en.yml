@@ -1,0 +1,75 @@
+error:
+  http:
+    pm101: Bad Http Request.
+    pm102: Unauthorized.
+    pm103: Forbidden.
+    pm104: Method Not Allowed.
+    pm105: Unsupported Media Type.
+    pm106: Internal Server Error.
+    pm107: Invalid Input Value. Please check the parameter value.
+  resource:
+    pm201: The resource corresponding to the given ID does not exist.
+    pm202: The function cannot be performed because the resource is in use.
+    pm271: Data verification is required.
+  file:
+    pm301: Invalid support file type. Please check the file type.
+    pm302: The file upload failed.
+    pm303: The file download failed.
+    pm304: An error occurred while saving the file.
+    pm305: Invalid file path.
+    pm306: An error occurred while creating the file.
+    pm307: An error occurred while deleting the file.
+    pm308: An error occurred while decompressing the file.
+    pm309: An error occurred while compressing the file.
+    pm310: An error occurred while decompiling the file.
+    pm371: An error occurred while reading the file.
+    pm372: An error occurred while creating the directory.
+    pm373: An error occurred while creating the compressed file.
+    pm374: An error occurred while filing encoding conversion.
+    pm375: Maximum upload size exceeded(limit 1 GB).
+    pm376: An error occurred while hashing the file.
+    pm377: Invalid file type.
+    pm378: Maximum File name size exceeded(limit 100 characters).
+  db:
+    pm401: Data constraint violation occurred.
+    pm402: The Database is not supported.
+  auth:
+    pm501: Invalid user ID or password.
+    pm503: This account is locked.
+    pm504: The authorization header cannot be blank.
+    pm505: Invalid authorization header size.
+    pm506: Invalid JWT signature.
+    pm507: Invalid JWT Form.
+    pm508: Expired JWT.
+    pm509: Unsupported JWT.
+    pm510: Invalid JWT claims.
+    pm511: Invalid user.
+    pm512: Not permitted to refresh the token.
+    pm513: Not permitted to access token.
+    pm514: Authorization failed.
+    pm515: Password decryption failed.
+    pm516: JWT Access Token Verification failed.
+    pm517: Password decryption failed.
+  json:
+    pm601: An error occurred during deserialization..
+  task:
+    pm701: Job execution failed.
+    pm702: No contents detected by analysis rule.
+    pm703: Syntax error occurred in the analysis rule.
+    pm704: pom.xml does not exist.
+    pm705: Failed to run the process.
+    pm706: There are no war file.
+    pm707: There are more than two war files.
+  scm:
+    pm801: The SCM URL is not supported.
+    pm802: The SCM authentication failed.
+    pm803: An error occurred while cloning the git remote repository.
+    pm804: Check the SCM URL.
+    pm805: The password is null.
+    pm806: The private key is not supported type.
+  subscription:
+    pm901: Subscription not found.
+    pm902: Invalid subscription.
+    pm903: This is not a contracted server.
+    pm904: Your subscription has expired.
+    pm905: Cannot be registered because it exceeds specified in the subscription.

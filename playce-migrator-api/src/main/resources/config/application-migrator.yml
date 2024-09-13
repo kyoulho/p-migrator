@@ -1,0 +1,6 @@
+playce-migrator:
+  version: @project.version@
+  work-dir: /opt/migrator/work-dir
+  origin-dir: /opt/migrator/origin-dir
+
+  oauth-db-name: oauthdb

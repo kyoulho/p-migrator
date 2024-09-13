@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.playce.migrator.dao.mapper.MigrationHistoryMapper">
+    <update id="updateToStatusByFromStatus">
+        update migration_history
+           set job_status = #{toStatus}
+         where job_status = #{fromStatus}
+    </update>
+    <select id="selectMigrationRequestItems" resultType="io.playce.migrator.dto.migration.MigrationTaskItem">
+        select a.project_id
+             , a.application_id
+             , a.application_type
+             , a.target_id
+             , a.origin_file_name
+             , mh.migration_history_id
+             , mh.base_image_name
+             , mh.dockerfile_config
+             , mh.tag_name
+             , p.project_name
+             , t.containerization_yn
+          from migration_history mh
+          join application a
+            on a.application_id = mh.application_id
+          join project p
+            on p.project_id = a.project_id
+          join target t
+            on t.target_id = a.target_id
+         where mh.job_status = 'REQ'
+         order by mh.migration_history_id
+    </select>
+
+    <select id="selectMigrationHistories" resultType="io.playce.migrator.dto.migrationhistory.MigrationHistoryResponse">
+        select a.project_id
+             , mh.migration_history_id
+             , mh.compress_result_path as 'migrationResultFilePath'
+             , mh.job_status
+             , mh.error_message
+             , mh.start_datetime
+             , mh.end_datetime
+             , mh.application_id
+             , count(1) as applied_rule_count
+          from migration_history mh
+          join application a
+            on mh.application_id = a.application_id
+          left join (
+            select mrl.migration_history_id
+                 , mrl.migration_rule_id
+              from migration_rule_link mrl
+              join migration_history mh
+                on mh.migration_history_id = mrl.migration_history_id
+             where mh.application_id = #{applicationId}
+             group by mrl.migration_history_id
+                 , mrl.migration_rule_id
+          ) as t
+            on t.migration_history_id = mh.migration_history_id
+         where mh.application_id = #{applicationId}
+         group by mh.migration_history_id
+         order by mh.migration_history_id desc
+    </select>
+
+    <select id="selectAppliedMigrationRuleList" resultType="io.playce.migrator.dto.migrationhistory.AppliedMigrationRuleResponse">
+        select mr.migration_rule_name,
+               mr.migration_rule_content
+        from migration_rule mr
+        where mr.migration_rule_id in (
+            select mrl.migration_rule_id
+            from migration_rule_link mrl
+            where mrl.migration_history_id = #{migrationHistoryId}
+            )
+    </select>
+
+    <select id="selectChangedFiles" resultType="io.playce.migrator.dto.migrationhistory.ChangedFiles">
+        select cf.changed_file_id,
+               cf.origin_file_absolute_path,
+               cf.file_path_in_result as file_path,
+               mh.compress_result_path as migration_file_name
+        from changed_file cf
+        left join migration_history mh
+            on cf.migration_history_id = mh.migration_history_id
+        where
+            cf.migration_history_id = #{migrationHistoryId}
+        order by cf.changed_file_id desc
+    </select>
+</mapper>

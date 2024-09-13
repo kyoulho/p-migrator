@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+      stages {
+
+        stage('Git Pull') {
+            steps {
+                git
+                    branch: 'dev',
+                    credentialsId: 'dba8bf83-ef33-488d-9e1d-0966bd16b8c9',
+                    url: 'git@bitbucket.org:cloud-osci/playce-migrator-mvp.git'
+            }
+        }
+
+        stage('Build Backend'){
+            steps{
+                sh 'mvn clean install'
+            }
+        }
+
+        stage('Create migrator-roro.war'){
+            steps{
+                sh 'cp $WORKSPACE/playce-migrator-api/target/migrator.war $WORKSPACE/playce-migrator-api/target/migrator-roro.war'
+            }
+        }
+
+        stage('Insert Frontend Source'){
+            steps{
+                 sh 'cd $WORKSPACE/../dev-migrator-frontend'
+                 sh 'zip -ur $WORKSPACE/playce-migrator-api/target/migrator.war *'
+            }
+        }
+
+        stage('Copy war file to RoRo'){
+            steps{
+                sh 'scp -v -o StrictHostKeyChecking=no -i $HOME/roro_id_rsa $WORKSPACE/playce-migrator-api/target/migrator-roro.war roro@192.168.4.61:roro-svr/webapps/migrator.war'
+            }
+        }
+
+        stage('Deploy'){
+            steps{
+                deploy
+                    adapters: [tomcat9(credentialsId: '15829fab-c321-4dfa-a674-72aff96bd1c7', path: '', url: 'http://localhost:8080')],
+                    contextPath: '/',
+                    war: '**/target/*.war'
+            }
+        }
+    }
+}

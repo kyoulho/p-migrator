@@ -1,0 +1,5 @@
+scheduler-config:
+  toggle:
+    enable-analysis: false
+    enable-migration: false
+

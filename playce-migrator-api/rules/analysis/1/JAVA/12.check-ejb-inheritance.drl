@@ -1,0 +1,14 @@
+import io.playce.migrator.dto.analysis.AnalysisRuleRequest
+import io.playce.migrator.dto.analysis.AnalysisRuleResult
+import io.playce.migrator.migration.process.util.ResultUtil
+
+rule "check servlet inheritance - extends EJBHome, extends javax.ejb.EJBHome, extends EJBObject, extends javax.ejb.EJBObject, implements SessionBean, implements javax.ejb.SessionBean"
+    when
+        request: AnalysisRuleRequest(content.contains("extends EJBHome") || content.contains("extends javax.ejb.EJBHome") ||
+            content.contains("extends EJBObject") || content.contains("extends javax.ejb.EJBObject") || content.contains("implements SessionBean") ||
+             content.contains("implements javax.ejb.SessionBean"))
+    then
+        AnalysisRuleResult result = ResultUtil.makeAnalysisRuleResult(${ruleId}, request);
+
+        result.setOverrideComment("EJB 에 종속성이 있습니다. ");
+end;

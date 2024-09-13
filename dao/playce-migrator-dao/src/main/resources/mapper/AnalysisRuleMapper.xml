@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.playce.migrator.dao.mapper.AnalysisRuleMapper">
+    <select id="selectRulesByTargetId" resultType="io.playce.migrator.dto.analysis.AnalysisRuleResponse">
+        select analysis_rule_id,
+               analysis_rule_name,
+               importance,
+               analysis_rule_content,
+               todo,
+               link,
+               description,
+               ar.analysis_processing_policy_id,
+               comment,
+               regist_login_id,
+               regist_datetime,
+               modify_login_id,
+               modify_datetime
+        from target_analysis_processing_policy_link tappl
+        inner join analysis_rule ar on ar.analysis_processing_policy_id = tappl.analysis_processing_policy_id
+        where target_id = #{targetId}
+    </select>
+
+    <select id="selectAnalysisReportRules"
+            resultType="io.playce.migrator.dto.analysisreport.AnalysisReportRuleResponse">
+        select ar.analysis_rule_id,
+               ar.analysis_rule_name,
+               count(temp.analysis_history_id) as count
+        from analysis_rule ar
+        join analysis_rule_report_group_link arrgl
+        on ar.analysis_rule_id = arrgl.analysis_rule_id
+        left join (select ahd.analysis_history_id,
+                            asr.analysis_rule_id
+                            from analysis_history_detail ahd
+                            left join analysis_rule asr on asr.analysis_rule_id = ahd.analysis_rule_id
+                            where ahd.analysis_history_id = #{analysisHistoryId}) as temp on ar.analysis_rule_id = temp.analysis_rule_id
+        where arrgl.analysis_report_group_id = #{analysisReportGroupId}
+        group by ar.analysis_rule_id
+        order by count desc
+    </select>
+
+    <select id="selectRulesWithRuleGroups" resultType="io.playce.migrator.dto.analysis.AnalysisRuleResponse">
+        select analysis_rule_id,
+               analysis_rule_name,
+               importance,
+               analysis_rule_content,
+               comment,
+               todo,
+               link,
+               description,
+               app.analysis_processing_policy_id,
+               app.processing_type,
+               regist_login_id,
+               regist_datetime,
+               modify_login_id,
+               modify_datetime
+        from analysis_rule ar
+        inner join analysis_processing_policy app
+        on ar.analysis_processing_policy_id = app.analysis_processing_policy_id
+        where delete_yn = 'N'
+        order by analysis_rule_id desc
+    </select>
+    <select id="selectRuleWithRuleGroup" resultType="io.playce.migrator.dto.analysis.AnalysisRuleResponse">
+        select analysis_rule_id,
+               analysis_rule_name,
+               importance,
+               analysis_rule_content,
+               comment,
+               todo,
+               link,
+               description,
+               app.analysis_processing_policy_id,
+               app.processing_type,
+               regist_login_id,
+               regist_datetime,
+               modify_login_id,
+               modify_datetime
+        from analysis_rule ar
+        inner join analysis_processing_policy app
+        on ar.analysis_processing_policy_id = app.analysis_processing_policy_id
+        where delete_yn = 'N'
+          and ar.analysis_rule_id = #{analysisRuleId}
+    </select>
+</mapper>

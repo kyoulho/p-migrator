@@ -1,0 +1,26 @@
+import io.playce.migrator.dto.analysis.AnalysisRuleRequest
+import io.playce.migrator.dto.analysis.AnalysisRuleResult
+import io.playce.migrator.migration.process.util.ResultUtil
+
+rule "check encoding - KSC5601"
+    when
+        request: AnalysisRuleRequest(content.contains("KSC5601"), c: content)
+    then
+        AnalysisRuleResult result = ResultUtil.makeAnalysisRuleResult(${ruleId}, request);
+
+        String detectStr = ResultUtil.getValueFromKeyword(c, "KSC5601");
+        result.setDetectedString(detectStr);
+
+        result.setOverrideComment("발견된 인코딩 : " + detectStr + "의 확인이 필요합니다.");
+end;
+rule "check encoding - ksc5601"
+    when
+        request: AnalysisRuleRequest(content.contains("ksc5601"), c: content)
+    then
+        AnalysisRuleResult result = ResultUtil.makeAnalysisRuleResult(${ruleId}, request);
+
+        String detectStr = ResultUtil.getValueFromKeyword(c, "ksc5601");
+        result.setDetectedString(detectStr);
+
+        result.setOverrideComment("발견된 인코딩 : " + detectStr + "의 확인이 필요합니다.");
+end;

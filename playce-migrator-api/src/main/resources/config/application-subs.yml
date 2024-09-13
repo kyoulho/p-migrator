@@ -1,0 +1,3 @@
+subscription:
+  file-path: ${playce-migrator.work-dir}/../.subscription
+  signature: ${playce-migrator.work-dir}/../.signature

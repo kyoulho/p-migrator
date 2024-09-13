@@ -1,0 +1,4 @@
+analysis-job:
+  fixed:
+    init-delay: 2 # second
+    fixed-delay: 2 # second

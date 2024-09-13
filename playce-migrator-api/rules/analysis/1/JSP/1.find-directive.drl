@@ -1,0 +1,18 @@
+import io.playce.migrator.dto.analysis.AnalysisRuleRequest
+import io.playce.migrator.dto.analysis.AnalysisRuleResult
+
+rule "find directive"
+    when
+        request: AnalysisRuleRequest(content.contains("<%@") && content.contains("page") && content.contains("%>"))
+    then
+        AnalysisRuleResult result = new AnalysisRuleResult();
+        result.setAnalysisRuleId(${ruleId});
+        result.setLineNumber(result.getLineNumber());
+
+        String content = request.getContent();
+        int startIndex = content.indexOf("<%@");
+        int lastIndex = content.lastIndexOf("%>") + 2;
+        result.setDetectedString(content.substring(startIndex, lastIndex));
+
+        request.setResult(result);
+end;

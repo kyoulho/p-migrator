@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.playce.migrator.dao.mapper.AnalysisHistoryMapper">
+    <resultMap id="analysisReportRuleResult" type="io.playce.migrator.dto.analysisreport.AnalysisReportRuleResult"
+               autoMapping="true">
+        <id property="analysisFilePath" column="analysis_file_path"/>
+        <id property="analysisFileName" column="analysis_file_name"/>
+        <collection property="issueDetails" ofType="io.playce.migrator.dto.analysisreport.IssueDetail"
+                    autoMapping="true"/>
+    </resultMap>
+    <resultMap id="analysisTaskItem" type="io.playce.migrator.dto.analysis.AnalysisTaskItem"
+               autoMapping="true">
+        <result column="password_yn" property="credentialPasswordYn" typeHandler="io.playce.migrator.dao.converter.YNTypeHandler"/>
+    </resultMap>
+
+    <update id="updateToStatusByFromStatus">
+        update analysis_history
+        set job_status = #{toStatus}
+        where job_status = #{fromStatus}
+    </update>
+
+    <select id="selectAnalysisRequestItems" resultMap="analysisTaskItem">
+        select a.project_id
+             , a.application_id
+             , a.application_type
+             , t.target_id
+             , t.java_version
+             , a.origin_path
+             , a.origin_file_name
+             , c.credential_username
+             , c.password_yn
+             , c.password as credentialPassword
+             , c.key_content as credentialKeyContent
+             , ah.analysis_history_id
+             , ah.selected_library_names
+        from analysis_history ah
+        join application a
+          on a.application_id = ah.application_id
+        join target t
+          on t.target_id = a.target_id
+        left join credential c
+          on c.credential_id = a.credential_id
+        where ah.job_status = 'REQ'
+        order by ah.analysis_history_id
+    </select>
+
+    <select id="selectAnalysisHistories"
+            resultType="io.playce.migrator.dto.analysishistory.AnalysisHistoryResponse">
+        select a.project_id
+             , ah.analysis_history_id
+             , ah.application_id
+             , ah.job_status
+             , ah.error_message
+             , ah.start_datetime
+             , ah.end_datetime
+             , sum(if(t.analysis_rule_id is null, 0, 1)) as applied_rule_count
+        from analysis_history ah
+                 join application a
+                      on ah.application_id = a.application_id
+                 left join (
+            select ahd.analysis_history_id
+                 , ahd.analysis_rule_id
+            from analysis_history_detail ahd
+                     join analysis_history ah
+                          on ah.analysis_history_id = ahd.analysis_history_id
+            where ah.application_id = #{applicationId}
+            group by ahd.analysis_history_id
+                   , ahd.analysis_rule_id
+        ) as t on t.analysis_history_id = ah.analysis_history_id
+        where ah.application_id = #{applicationId}
+        group by ah.analysis_history_id
+        order by ah.analysis_history_id desc
+    </select>
+
+    <select id="selectAppliedAnalysisRuleList"
+            resultType="io.playce.migrator.dto.analysishistory.AppliedAnalysisRuleResponse">
+        select ar.analysis_rule_name,
+               ar.analysis_rule_content
+        from analysis_rule ar
+        where ar.analysis_rule_id in (select ahd.analysis_rule_id
+                                      from analysis_history_detail ahd
+                                      where analysis_history_id = #{analysisHistoryId})
+    </select>
+
+
+    <select id="selectAnalysisReportRuleResults" resultMap="analysisReportRuleResult">
+       select ahd.analysis_file_path
+            , ahd.analysis_file_name
+            , ahd.analysis_line_number
+            , IF(ahd.override_comment is null, ar.comment, ahd.override_comment) as override_comment
+            ,ahd.detected_string
+         from analysis_history_detail ahd
+         join analysis_rule ar
+           on ar.analysis_rule_id = ahd.analysis_rule_id
+        where ahd.analysis_history_id = #{analysisHistoryId}
+          and ahd.analysis_rule_id = #{analysisRuleId}
+    </select>
+
+    <select id="selectSummaryTechnology" resultType="io.playce.migrator.dto.analysisreport.SummaryTechnology">
+        select arg.group_name as technology,
+               count(distinct analysis_origin_file_path) as count
+        from analysis_history_detail ahd
+                 inner join analysis_rule ar on ahd.analysis_rule_id = ar.analysis_rule_id
+                 inner join analysis_rule_group_link argl on ar.analysis_rule_id = argl.analysis_rule_id
+                 inner join analysis_rule_group arg on argl.analysis_rule_group_id = arg.analysis_rule_group_id
+        where ahd.analysis_history_id = #{analysisHistoryId}
+        group by group_name
+        order by count desc
+    </select>
+
+    <select id="selectSummaryExtension" resultType="io.playce.migrator.dto.analysisreport.SummaryExtension">
+        select substring_index(summary_gubun, ' ', -1) as extension,
+               sum(file_count) as count
+        from application_summary as sum
+                 inner join application a on sum.application_id = a.application_id
+        where a.application_id = #{applicationId}
+          and (summary_gubun like concat('%', a.origin_file_name, '%') or summary_gubun like 'library%')
+        group by extension
+        order by count desc
+    </select>
+
+</mapper>

@@ -1,0 +1,4 @@
+playce-migrator:
+  version: TEST
+  work-dir: /tmp/work-dir
+  origin-dir: /tmp/origin-dir

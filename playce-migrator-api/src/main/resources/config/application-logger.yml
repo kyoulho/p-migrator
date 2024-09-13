@@ -1,0 +1,11 @@
+logging:
+  file:
+    name: logs/migrator.log
+    max-size: 200MB
+    max-history: 30
+  level:
+    root: info
+    io.playce.common.subscription: debug
+    io.playce.migrator: trace
+    io.playce.migrator.dao.mapper: info
+    io.playce.migrator.domain.authentication.jwt.filter: debug

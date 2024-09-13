@@ -1,0 +1,23 @@
+import io.playce.migrator.dto.migration.MigrationRuleRequest
+import io.playce.migrator.dto.migration.MigrationRuleResult
+import io.playce.migrator.migration.process.util.CommentUtil
+import io.playce.migrator.migration.process.util.ResultUtil
+import java.util.Map;
+
+rule "Convert source to target string in xml file"
+    when
+        request: MigrationRuleRequest(c: content);
+    then
+        MigrationRuleResult result = ResultUtil.makeMigrationRuleResult(${ruleId}, request);
+
+        Map<String, String> map = request.getInput();
+        String source = map.get("source");
+        String target = map.get("target");
+
+        if(c.contains(source)) {
+            String newContent = c.replaceAll(source, target);
+            result.setContent(newContent);
+        } else {
+            result.setContent(c);
+        }
+end;

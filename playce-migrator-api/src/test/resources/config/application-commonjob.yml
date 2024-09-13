@@ -1,0 +1,4 @@
+common-job:
+  remove-garbage-files-fixed:
+    init-delay: 20000 # second
+    fixed-delay: 20000 # second

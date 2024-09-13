@@ -1,0 +1,42 @@
+${AnsiColor.YELLOW}
+                      *
+                      %%%%%*
+                      %%%%%%%%%*
+                /(/   %%%%%%%%%%%%%*
+            /(((((/   %%%%%%%%%%%%%%%%%*
+       /((((((((((/   %%%%%%%%%%%%%%%%%%
+   /((((((((((((((/   %%%%%%%%%%%%%%%%%%
+/(((((((((((((((((/   %%%%*  *%%%%%%%%%%      ___ _                               _                 _                            ___
+/(((((((((((((((((/   %*         *%%%%%%     / _ \ | __ _ _   _  ___ ___    /\/\ (_) __ _ _ __ __ _| |_ ___  _ __    /\/\/\   /\/ _ \
+/(((((((((((((((((/                  *%%    / /_)/ |/ _` | | | |/ __/ _ \  /    \| |/ _` | '__/ _` | __/ _ \| '__|  /    \ \ / / /_)/
+/(((((((((((((((((/   &&&*                 / ___/| | (_| | |_| | (_|  __/ / /\/\ \ | (_| | | | (_| | || (_) | |    / /\/\ \ V / ___/
+/(((((((((((((((((/   &&&&&&&&*            \/    |_|\__,_|\__, |\___\___| \/    \/_|\__, |_|  \__,_|\__\___/|_|    \/    \/\_/\/
+/(((((((((((((/      *&&&&&&&&&&&&*                       |___/                     |___/
+/(((((((((/      *&&&&&&&&&&&&&&&&&&&&*     _____                _____                        _____                 _ _   _
+/(((((/      *&&&&&&&&&&&&&&&&&&&&&&*      |     |___ ___ ___   |   __|___ _ _ ___ ___ ___   |     |___ ___ ___ _ _| | |_|_|___ ___
+/(/       *&&&&&&&&&&&&&&&&&&&&&*          |  |  | . | -_|   |  |__   | . | | |  _|  _| -_|  |   --| . |   |_ -| | | |  _| |   | . |
+              *&&&&&&&&&&&&&*              |_____|  _|___|_|_|  |_____|___|___|_| |___|___|  |_____|___|_|_|___|___|_|_| |_|_|_|_  |
+                  *&&&&&*                        |_|                                                                           |___|
+                     * ${AnsiColor.BLUE}
+${spring.application.name} Version - ${playce-migrator.version}
+SpringBoot Version - ${spring-boot.version}
+Java Version - ${java.version}
+${AnsiColor.CYAN}
+----- config --------------------------------------------------------
+storage
+  url  - ${spring.datasource.url}
+  user - ${spring.datasource.username}
+
+scheduler
+  analysis  - enable: ${scheduler-config.toggle.enable-analysis}, start-delay: ${analysis-job.fixed.init-delay} sec, interval: ${analysis-job.fixed.fixed-delay} sec
+  migration - enable: ${scheduler-config.toggle.enable-migration}, start-delay: ${migration-job.fixed.init-delay} sec, interval: ${migration-job.fixed.fixed-delay} sec
+  remove garbage files - start-delay: ${common-job.remove-garbage-files-fixed.init-delay} sec, check-interval: ${common-job.remove-garbage-files-fixed.fixed-delay} sec
+
+directory
+  upload - ${playce-migrator.origin-dir}
+    work - ${playce-migrator.work-dir}
+
+server
+    port - ${server.port}
+---------------------------------------------------------------------
+${AnsiStyle.NORMAL}

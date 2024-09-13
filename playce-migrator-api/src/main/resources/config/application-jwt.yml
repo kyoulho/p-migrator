@@ -1,0 +1,5 @@
+## JWT Properties
+jwt:
+  token-signing-key: cGxheWNlLW9hdXRo # playce-oauth Base64 Encoding
+  token-expiration-time: 180
+  refresh-token-expiration-time: 720

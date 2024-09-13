@@ -1,0 +1,26 @@
+import io.playce.migrator.dto.analysis.AnalysisRuleRequest
+import io.playce.migrator.dto.analysis.AnalysisRuleResult
+import io.playce.migrator.migration.process.util.ResultUtil
+
+rule "check encoding - UTF-"
+    when
+        request: AnalysisRuleRequest(content.contains("UTF-"), c: content)
+    then
+        AnalysisRuleResult result = ResultUtil.makeAnalysisRuleResult(${ruleId}, request);
+
+        String detectStr = ResultUtil.getValueFromKeyword(c, "UTF-");
+        result.setDetectedString(detectStr);
+
+        result.setOverrideComment("발견된 인코딩 : " + detectStr + "의 확인이 필요합니다.");
+end;
+rule "check encoding - utf-"
+    when
+        request: AnalysisRuleRequest(content.contains("utf-"), c: content)
+    then
+        AnalysisRuleResult result = ResultUtil.makeAnalysisRuleResult(${ruleId}, request);
+
+        String detectStr = ResultUtil.getValueFromKeyword(c, "utf-");
+        result.setDetectedString(detectStr);
+
+        result.setOverrideComment("발견된 인코딩 : " + detectStr + "의 확인이 필요합니다.");
+end;

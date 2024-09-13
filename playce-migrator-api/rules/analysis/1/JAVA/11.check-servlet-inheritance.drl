@@ -1,0 +1,13 @@
+import io.playce.migrator.dto.analysis.AnalysisRuleRequest
+import io.playce.migrator.dto.analysis.AnalysisRuleResult
+import io.playce.migrator.migration.process.util.ResultUtil
+
+rule "check servlet inheritance - extends HttpServlet, extends javax.servlet.http.HttpServlet, import org.springframework.web.servlet"
+    when
+        request: AnalysisRuleRequest(content.contains("extends HttpServlet") ||
+            content.contains("extends javax.servlet.http.HttpServlet") || content.contains("import org.springframework.web.servlet"))
+    then
+        AnalysisRuleResult result = ResultUtil.makeAnalysisRuleResult(${ruleId}, request);
+
+        result.setOverrideComment("Servlet 에 종속성이 있습니다. ");
+end;

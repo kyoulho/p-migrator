@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.playce.migrator.dao.mapper.ApplicationMapper">
+
+    <resultMap id="applicationResponse" type="io.playce.migrator.dto.application.ApplicationResponse" autoMapping="true">
+        <id property="applicationId" column="application_id" javaType="Long"/>
+        <association property="lastAnalysis" column="application_id" javaType="io.playce.migrator.dto.analysishistory.LastAnalysisHistory" autoMapping="true" select="selectLastAnalysisHistory"/>
+        <association property="successAnalysisHistory" column="application_id" javaType="io.playce.migrator.dto.analysishistory.SuccessAnalysisHistory" autoMapping="true" select="selectSuccessAnalysisHistory"/>
+        <association property="lastMigration" column="application_id" javaType="io.playce.migrator.dto.migrationhistory.LastMigrationHistory" autoMapping="true" select="selectLastMigrationHistory"/>
+        <association property="successMigrationHistory" column="application_id" javaType="io.playce.migrator.dto.migrationhistory.SuccessMigrationHistory" autoMapping="true" select="selectSuccessMigrationHistory"/>
+    </resultMap>
+
+    <select id="selectApplication" resultMap="applicationResponse">
+        select a.project_id,
+               a.application_id,
+               IF(a.scm_yn = 'Y', true, false)            as scm_yn,
+               a.origin_path,
+               a.origin_file_name,
+               a.origin_file_size,
+               a.application_type,
+               IF(p.target_id = a.target_id, true, false) as project_target_use_yn,
+               a.credential_id,
+               a.middleware_type,
+               a.java_version,
+               a.target_id,
+               a.description,
+               a.regist_login_id,
+               a.regist_datetime,
+               a.modify_login_id,
+               a.modify_datetime
+        from application a
+                 inner join project p on p.project_id = a.project_id
+        where a.project_id = #{projectId}
+          and a.application_id = #{applicationId}
+    </select>
+    <select id="selectApplications" resultMap="applicationResponse">
+        select a.project_id,
+               a.application_id,
+               IF(a.scm_yn = 'Y', true, false)            as scm_yn,
+               a.origin_path,
+               a.origin_file_name,
+               a.origin_file_size,
+               a.application_type,
+               IF(p.target_id = a.target_id, true, false) as project_target_use_yn,
+               a.credential_id,
+               a.middleware_type,
+               a.java_version,
+               a.target_id,
+               a.description,
+               a.regist_login_id,
+               a.regist_datetime,
+               a.modify_login_id,
+               a.modify_datetime
+        from application a
+                 inner join project p on p.project_id = a.project_id
+        where a.project_id = #{projectId}
+        order by a.application_id desc
+    </select>
+
+    <select id="selectLastAnalysisHistory" resultType="io.playce.migrator.dto.analysishistory.LastAnalysisHistory">
+        select ah.job_status,
+               ah.error_message
+        from analysis_history ah
+        where ah.application_id = #{applicationId}
+        order by ah.analysis_history_id desc
+        limit 1
+    </select>
+    <select id="selectSuccessAnalysisHistory" resultType="io.playce.migrator.dto.analysishistory.SuccessAnalysisHistory">
+        select ah.application_id,
+               ah.analysis_history_id,
+               ah.job_status,
+               ah.error_message,
+               ah.start_datetime,
+               ah.end_datetime
+        from analysis_history ah
+        where ah.application_id = #{applicationId}
+          and ah.job_status = 'CMPL'
+        order by ah.analysis_history_id desc
+        limit 1
+    </select>
+    <select id="selectLastMigrationHistory" resultType="io.playce.migrator.dto.migrationhistory.LastMigrationHistory">
+        select mh.job_status,
+               mh.error_message
+        from migration_history mh
+        where mh.application_id = #{applicationId}
+        order by mh.migration_history_id desc
+        limit 1
+    </select>
+    <select id="selectSuccessMigrationHistory" resultType="io.playce.migrator.dto.migrationhistory.SuccessMigrationHistory">
+        select mh.application_id,
+               mh.migration_history_id,
+               mh.job_status,
+               mh.error_message,
+               mh.start_datetime,
+               mh.end_datetime
+        from migration_history mh
+        where mh.application_id = #{applicationId}
+          and mh.job_status = 'CMPL'
+        order by mh.migration_history_id desc
+        limit 1
+    </select>
+
+</mapper>

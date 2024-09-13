@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.playce.migrator.dao.mapper.RuleLoaderMapper">
+    <select id="selectAnalysisProcessingPolicies" resultType="io.playce.migrator.dao.entity.AnalysisProcessingPolicy">
+        select app.*
+          from analysis_processing_policy app
+          join target_analysis_processing_policy_link tappl
+            on tappl.analysis_processing_policy_id = app.analysis_processing_policy_id
+         where tappl.target_id = #{targetId}
+        <if test="processingType != null">
+           and app.processing_type = #{processingType}
+        </if>
+    </select>
+
+    <select id="selectMigrationRuleLinks" resultType="io.playce.migrator.dao.mybatis.MybatisMigrationRuleLink">
+        select mrl.*
+             , mr.file_type
+          from migration_rule_link mrl
+          join migration_rule mr
+            on mr.migration_rule_id = mrl.migration_rule_id
+         where mrl.migration_history_id = #{migrationHistoryId}
+    </select>
+</mapper>

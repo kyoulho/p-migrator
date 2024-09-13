@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.playce.migrator.dao.mapper.ProjectMapper">
+    <resultMap id="withTargetWithCount" type="io.playce.migrator.dto.project.ProjectResponse" autoMapping="true">
+        <id column="project_id" property="projectId"/>
+        <association property="target" autoMapping="true"/>
+    </resultMap>
+    <select id="selectProjectWithTargetWithAppCount" resultMap="withTargetWithCount">
+        select p.project_id,
+               p.project_name,
+               p.description,
+               p.regist_login_id,
+               p.regist_datetime,
+               p.modify_login_id,
+               p.modify_datetime,
+               t.target_id,
+               t.os_name,
+               t.middleware_name,
+               t.middleware_version,
+               t.java_version,
+               t.containerization_yn,
+               count(application_id) as applicationCount
+        from project p
+                 inner join target t on p.target_id = t.target_id
+                 left join application a on p.project_id = a.project_id
+        where p.project_id = #{projectId}
+        group by p.project_id
+    </select>
+
+    <select id="selectProjectsWithTargetWithAppCount" resultMap="withTargetWithCount">
+        select p.project_id,
+               p.project_name,
+               p.description,
+               p.regist_login_id,
+               p.regist_datetime,
+               p.modify_login_id,
+               p.modify_datetime,
+               t.target_id,
+               t.os_name,
+               t.middleware_name,
+               t.middleware_version,
+               t.java_version,
+               t.containerization_yn,
+               count(application_id) as applicationCount
+        from project p
+                 inner join target t on p.target_id = t.target_id
+                 left join application a on p.project_id = a.project_id
+        group by p.project_id
+        order by p.project_id desc
+    </select>
+</mapper>

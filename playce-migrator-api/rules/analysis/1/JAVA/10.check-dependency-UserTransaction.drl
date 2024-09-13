@@ -1,0 +1,17 @@
+import io.playce.migrator.dto.analysis.AnalysisRuleRequest
+import io.playce.migrator.dto.analysis.AnalysisRuleResult
+import io.playce.migrator.migration.process.util.ResultUtil
+
+rule "check dependency -UserTransaction"
+
+    when
+        request: AnalysisRuleRequest(content.contains("javax.transaction.UserTransaction"), c: content)
+    then
+        AnalysisRuleResult result = new AnalysisRuleResult();
+        request.setResult(result);
+        result.setAnalysisRuleId(${ruleId});
+        String detectStr = ResultUtil.getValueFromKeyword(c, "javax.transaction.UserTransaction");
+        result.setDetectedString(detectStr);
+
+        result.setOverrideComment("UserTransaction 에 종속성이 있습니다. " + detectStr);
+end;

@@ -1,0 +1,26 @@
+import io.playce.migrator.dto.analysis.AnalysisRuleRequest
+import io.playce.migrator.dto.analysis.AnalysisRuleResult
+import io.playce.migrator.migration.process.util.ResultUtil
+
+rule "check encoding - EUC-KR"
+    when
+        request: AnalysisRuleRequest(content.contains("EUC-KR"), c: content)
+    then
+        AnalysisRuleResult result = ResultUtil.makeAnalysisRuleResult(${ruleId}, request);
+
+        String detectStr = ResultUtil.getValueFromKeyword(c, "EUC-KR");
+        result.setDetectedString(detectStr);
+
+        result.setOverrideComment("발견된 인코딩 : " + detectStr + "의 확인이 필요합니다.");
+end;
+rule "check encoding - euc-kr"
+    when
+        request: AnalysisRuleRequest(content.contains("euc-kr"), c: content)
+    then
+        AnalysisRuleResult result = ResultUtil.makeAnalysisRuleResult(${ruleId}, request);
+
+        String detectStr = ResultUtil.getValueFromKeyword(c, "euc-kr");
+        result.setDetectedString(detectStr);
+
+        result.setOverrideComment("발견된 인코딩 : " + detectStr + "의 확인이 필요합니다.");
+end;
